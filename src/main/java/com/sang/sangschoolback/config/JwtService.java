@@ -1,5 +1,6 @@
 package com.sang.sangschoolback.config;
 
+import com.sang.sangschoolback.entity.Utilisateur;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,8 +22,15 @@ public class JwtService {
         return extractClaim(token,Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(),userDetails);
+    public String generateToken(Utilisateur utilisateur, UserDetails userDetails){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("nom", utilisateur.getNom());
+        claims.put("prenoms", utilisateur.getPrenoms());
+        claims.put("username", utilisateur.getUsername());
+        claims.put("role", utilisateur.getRole().name());
+        claims.put("email", utilisateur.getEmail());
+        claims.put("statut", utilisateur.getStatut());
+        return generateToken(claims,userDetails);
     }
 
     public  String generateToken(
