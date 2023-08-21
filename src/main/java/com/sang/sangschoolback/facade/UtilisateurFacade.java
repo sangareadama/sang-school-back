@@ -2,10 +2,12 @@ package com.sang.sangschoolback.facade;
 
 import com.sang.sangschoolback.controller.dto.TableauUtilisateurDto;
 import com.sang.sangschoolback.controller.dto.UtilisateurDto;
+import com.sang.sangschoolback.entity.Personnel;
 import com.sang.sangschoolback.entity.enums.Role;
 import com.sang.sangschoolback.entity.Utilisateur;
 import com.sang.sangschoolback.entity.enums.StatutUtilisateur;
-import com.sang.sangschoolback.repository.UtilisateurRepository;
+import com.sang.sangschoolback.repository.PersonnelRepository;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +21,14 @@ import static java.util.stream.Collectors.partitioningBy;
 
 @Service
 public class UtilisateurFacade {
-    private final UtilisateurRepository utilisateurRepository;
+
+
+    private final PersonnelRepository personnelRepository;
     private final PasswordEncoder passwordEncoder;
     private static final String DEFAULT_PASSWORD = "123";
 
-    public UtilisateurFacade(UtilisateurRepository utilisateurRepository, PasswordEncoder passwordEncoder) {
-        this.utilisateurRepository = utilisateurRepository;
+    public UtilisateurFacade( PersonnelRepository personnelRepository, PasswordEncoder passwordEncoder) {
+        this.personnelRepository = personnelRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -33,14 +37,14 @@ public class UtilisateurFacade {
      * @return  Liste touts les utilisateurs
      */
     public TableauUtilisateurDto listeUtilisateur() {
-        List<Utilisateur>  listeDesUtilisateurs = utilisateurRepository.findAll();
+        List<Personnel>  listeDespersonnels = personnelRepository.findAll();
 
-        Long totalUtilisateurs = (long) listeDesUtilisateurs.size();
-        Map<Boolean, Long> map = listeDesUtilisateurs.stream()
+        Long totalUtilisateurs = (long) listeDespersonnels.size();
+        Map<Boolean, Long> map = listeDespersonnels.stream()
                 .collect(partitioningBy((Utilisateur utilisateur) -> ((StatutUtilisateur.ACTIF).equals(utilisateur.getStatut())), counting()));
         long utilisateurActifs = map.get(true);
         long UtilisateurInactif = map.get(false);
-        List<UtilisateurDto> utilisateurs = listeDesUtilisateurs.stream()
+        List<UtilisateurDto> utilisateurs = listeDespersonnels.stream()
                 .map(UtilisateurDto::new)
                 .collect(Collectors.toList());
 
@@ -53,14 +57,14 @@ public class UtilisateurFacade {
      */
     @Transactional
     public void enregistrerOuModifierUtilisateur(UtilisateurDto utilisateurDto) {
-        Utilisateur utilisateur = utilisateurRepository.findByUsername(utilisateurDto.getUsername().trim()).orElse(null);
-        if (utilisateur == null ){
-            utilisateur = new Utilisateur(utilisateurDto.getNom(), utilisateurDto.getPrenoms(), utilisateurDto.getEmail(),
-                        utilisateurDto.getUsername(), passwordEncoder.encode(DEFAULT_PASSWORD), Role.valueOf(utilisateurDto.getRole()), StatutUtilisateur.valueOf(utilisateurDto.getStatut()));
+        Personnel personnel = personnelRepository.findByUsername(utilisateurDto.getUsername().trim()).orElse(null);
+        if (personnel == null ){
+            personnel = new Personnel(utilisateurDto.getNom(), utilisateurDto.getPrenoms(), utilisateurDto.getEmail(),
+                        utilisateurDto.getUsername(), passwordEncoder.encode(DEFAULT_PASSWORD), Role.valueOf(utilisateurDto.getRole()), StatutUtilisateur.valueOf(utilisateurDto.getStatut()),20);
         }else {
-            utilisateur.update(utilisateurDto.getNom(), utilisateurDto.getPrenoms(), utilisateurDto.getEmail(),Role.valueOf(utilisateurDto.getRole()), StatutUtilisateur.valueOf(utilisateurDto.getStatut()));
+            personnel.mettreAJour(utilisateurDto.getNom(), utilisateurDto.getPrenoms(), utilisateurDto.getEmail(),Role.valueOf(utilisateurDto.getRole()), StatutUtilisateur.valueOf(utilisateurDto.getStatut()),20);
         }
-        utilisateurRepository.save(utilisateur);
+        personnelRepository.save(personnel);
     }
 
     /**

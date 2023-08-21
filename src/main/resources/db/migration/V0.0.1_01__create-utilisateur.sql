@@ -1,6 +1,6 @@
-CREATE SEQUENCE utilisateur_id_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE personnel_seq START WITH 10 INCREMENT BY 50;
 
-CREATE TABLE utilisateur
+CREATE TABLE personnel
 (
     id INT8 PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -9,5 +9,6 @@ CREATE TABLE utilisateur
     username VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     role VARCHAR(100) NOT NULL,
-    statut VARCHAR(255)
+    statut VARCHAR(255),
+    age INT4
 );

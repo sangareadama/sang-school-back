@@ -4,7 +4,7 @@ package com.sang.sangschoolback.controller;
 import com.sang.sangschoolback.controller.dto.AuthDto;
 
 import com.sang.sangschoolback.controller.dto.TokenDto;
-import com.sang.sangschoolback.service.AuthenticationService;
+import com.sang.sangschoolback.service.SecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 //@RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    private final SecurityService securityService;
 
-    public AuthenticationController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    public AuthenticationController(SecurityService securityService) {
+        this.securityService = securityService;
     }
 
     @PostMapping("/authenticate")
-    public TokenDto authenticate(@NonNull HttpServletRequest req, @RequestBody AuthDto authDto
+    public TokenDto authenticate(@RequestBody AuthDto authDto
     ){
-        return authenticationService.authenticate(authDto);
+        return securityService.autentifierUtilisateur(authDto);
     }
 
 }

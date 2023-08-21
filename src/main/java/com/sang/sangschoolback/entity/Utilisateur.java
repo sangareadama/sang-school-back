@@ -5,25 +5,22 @@ import com.sang.sangschoolback.entity.enums.StatutUtilisateur;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
-import static com.sang.sangschoolback.entity.Utilisateur.TABLE_NAME;
+
+import static java.util.Collections.singleton;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
-@Entity
-@Table(name = TABLE_NAME )
-public class Utilisateur implements UserDetails {
 
-    public static final String TABLE_NAME = "utilisateur";
-    public static final String TABLE_ID = TABLE_NAME + "_id";
-    public static final String TABLE_SEQ = TABLE_ID + "_seq";
+@MappedSuperclass
+public abstract class Utilisateur implements  UserDetails  {
 
     @Id
-    @SequenceGenerator(name = TABLE_SEQ, sequenceName = TABLE_SEQ)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = TABLE_SEQ)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(name = "nom")
     private String nom;
@@ -40,6 +37,10 @@ public class Utilisateur implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "statut")
     private StatutUtilisateur statut;
+
+    public User buildUser() {
+        return new User(username, password, singleton(new SimpleGrantedAuthority(role.name())));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

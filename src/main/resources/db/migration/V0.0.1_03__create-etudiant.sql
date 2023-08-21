@@ -1,6 +1,6 @@
-CREATE SEQUENCE personnel_seq START WITH 10 INCREMENT BY 50;
+CREATE SEQUENCE etudiant_id_seq START WITH 10 INCREMENT BY 50;
 
-CREATE TABLE personnel
+CREATE TABLE etudiant
 (
     id INT8 PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -10,5 +10,5 @@ CREATE TABLE personnel
     password VARCHAR(100) NOT NULL,
     role VARCHAR(100) NOT NULL,
     statut VARCHAR(255),
-    age INT4
+    classe VARCHAR(100)
 );
